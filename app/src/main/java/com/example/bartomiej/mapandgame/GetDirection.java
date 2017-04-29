@@ -36,26 +36,40 @@ import java.util.Vector;
     private List<LatLng> pontos = new ArrayList<>();
     private GetDirection getDirection = new GetDirection();
 
-    GetDirectionHandler(Vector<LatLng> route, GoogleMap map, Activity activity) {
-        routeLatLng = route;
+    GetDirectionHandler(GoogleMap map, Activity activity) {
         this.map = map;
         this.activity = activity;
     }
 
     public void clearRouteLatLng() {
-        routeLatLng.clear();
+        if(routeLatLng!=null)
+            routeLatLng.clear();
     }
 
+    public void setRouteLatLng(Vector<LatLng> routeLatLng){
+        this.routeLatLng = routeLatLng;
+    }
+    // before calling createRoute(), routeLatLng must be set
     public void createRoute(){
-        new GetDirection().execute();
+        if(routeLatLng.size()>1)
+            getDirection.execute();
     }
-
+    //test function
     public void setDestination(String destLat, String destLng){
         getDirection.setDestination(destLat,destLng);
     }
-
+    //test function
     public void setOrigin(String originLat, String originLng){
         getDirection.setOrigin(originLat, originLng);
+    }
+    //always removes last route
+    public void removeRoute(){
+        if(printedRoutes.size()>0) {
+            for (Polyline p : printedRoutes.get(0)) {
+                p.remove();
+            }
+            printedRoutes.remove(0);
+        }
     }
 
     private class GetDirection extends AsyncTask<String, String, String> {
@@ -64,11 +78,11 @@ import java.util.Vector;
         private String origin = "Chicago,IL";
         private String destination = "Los Angeles,CA";
 
-        public void setDestination(String destinationLat, String destinationLng) {
+        private void setDestination(String destinationLat, String destinationLng) {
             destination = destinationLat + "," + destinationLng;
         }
 
-        public void setOrigin(String originLat, String originLng) {
+        private void setOrigin(String originLat, String originLng) {
             origin = originLat + "," + originLng;
         }
 

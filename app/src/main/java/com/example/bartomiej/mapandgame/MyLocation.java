@@ -1,10 +1,12 @@
 package com.example.bartomiej.mapandgame;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -13,16 +15,16 @@ import com.google.android.gms.maps.model.LatLng;
  * Created by Bartłomiej on 14.04.2017.
  */
 
-public class MyLocation implements LocationListener{
+public class MyLocation implements LocationListener {
 
     private Context context;
     private LocationManager locationManager;
     private double latitude, longitude, speed; // location parameters
     private double prevLatitude, prevLongitude;
     private int locationUpdateTime = 1000; //check location in every locationUpdateTime (ms)
-    private Location LastKnownLocation , PrevLocation;
+    private Location LastKnownLocation, PrevLocation;
 
-    public MyLocation(Context context){
+    public MyLocation(Context context) {
         this.context = context;
         locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, this);
@@ -109,7 +111,7 @@ public class MyLocation implements LocationListener{
 
                 double timeDiff = LastKnownLocation.getTime() - PrevLocation.getTime();
                 speed = distance[0]/timeDiff;
-                speed = speed * 3.6;
+                speed = speed * 3600/1000;
             }
         }
 

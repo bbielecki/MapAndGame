@@ -17,17 +17,25 @@ and handling a display process of task lists connected with particular marker.
  */
 public class MarkerHandler {
     private GoogleMap myMap;
-    private Vector<Marker> route;
+
     private Vector<Marker> freeMarkers;
     private Marker locationMarker;
 
 
     MarkerHandler(GoogleMap map){
-        route = new Vector<>();
-        freeMarkers = new Vector<>();
 
+        freeMarkers = new Vector<>();
         myMap = map;
 
+    }
+
+    public void removeLocationMarker(){
+        locationMarker.remove();
+    }
+
+    public void removeFreeMarkers(){
+        for (Marker m : freeMarkers)
+            m.remove();
     }
 
     // draw point of user location on map
@@ -42,18 +50,21 @@ public class MarkerHandler {
         }
     }
     // draw marker on map
-    public void drawMarkerOnMap(LatLng point, boolean routeMode) {
+    public Marker drawMarkerOnMap(LatLng point, boolean routeMode) {
         if (point != null) {
             //if route mode is on, created markers should be treated as another checkpoints for created route
             if(routeMode) {
-                route.add(myMap.addMarker(new MarkerOptions().position(point)));
+                return myMap.addMarker(new MarkerOptions().position(point));
                 // myMap.moveCamera(CameraUpdateFactory.zoomBy(15));
             }
             //else they are simple markers which means in fact nothing
             else {
-                freeMarkers.add(myMap.addMarker((new MarkerOptions().position(point))));
+                Marker freeMarker = myMap.addMarker((new MarkerOptions().position(point)));
+                freeMarkers.add(freeMarker);
+                return freeMarker;
             }
         }
+        return null;
     }
 
     public void drawRoute(){

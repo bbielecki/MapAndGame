@@ -23,8 +23,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.PatternItem;
 import com.google.android.gms.maps.model.Polyline;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Vector;
 
 import static com.example.bartomiej.mapandgame.R.id.map;
@@ -57,16 +55,6 @@ public class MapAndGameActivity extends AppCompatActivity
     private int clicCounter = 0;
     private final int getSpeedPeriod = 500;
 
-    // Create a stroke pattern of a gap followed by a dot.
-    private static final List<PatternItem> PATTERN_POLYLINE_DOTTED = Arrays.asList(GAP, DOT);
-
-    // Create a stroke pattern of a gap followed by a dash.
-    private static final List<PatternItem> PATTERN_POLYGON_ALPHA = Arrays.asList(GAP, DASH);
-
-    // Create a stroke pattern of a dot followed by a gap, a dash, and another gap.
-    private static final List<PatternItem> PATTERN_POLYGON_BETA =
-            Arrays.asList(DOT, GAP, DASH, GAP);
-
     //Line on a map made from LatLngs objects (points)
     private Polyline polyline;
     private Vector<LatLng> routeLatLng;
@@ -85,10 +73,10 @@ public class MapAndGameActivity extends AppCompatActivity
     private boolean speedThreadStarted = false;
     //creating MyLocation object with location and speed fields
     private MyLocation myLocation;
-    // vector containing routes created by user. Each route is created from short parts -> Polylines.
-    private Vector<Vector<Polyline>> printedRoutes;
     // handling all markers on map
     private MarkerHandler markerHandler;
+    //handling all routes created and drawing them on a map
+    private RouteHandler routeHandler;
 
     // Test GUI buttons
     Button locationButton;
@@ -109,6 +97,14 @@ public class MapAndGameActivity extends AppCompatActivity
     public void createRoute(Vector<LatLng> latLngs) {
         routeLatLng = latLngs;
 
+    }
+    //test method
+    public void deleteRoute(View v){
+        routeHandler.deleteRoute();
+    }
+    //test method
+    public void drawRouteThroughPoints(View v){
+        routeHandler.drawRouteThroughPoints();
     }
 
     public void setPointOnMap(LatLng pointOnMap) {
@@ -165,15 +161,6 @@ public class MapAndGameActivity extends AppCompatActivity
         markerHandler.drawRoute();
     }
 
-    public void removeRoute(View v){
-        if(printedRoutes.size()>0) {
-            for (Polyline p : printedRoutes.get(0)) {
-                p.remove();
-            }
-            printedRoutes.remove(0);
-        }
-    }
-
     public void showLocationOnMap(View v){
         LatLng loc = myLocation.getLocation();
 
@@ -194,12 +181,8 @@ public class MapAndGameActivity extends AppCompatActivity
 
      */
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
         super.onCreate(savedInstanceState);
         // Retrieve the content view that renders the map.
         setContentView(R.layout.activity_map_and_game);
@@ -228,19 +211,9 @@ public class MapAndGameActivity extends AppCompatActivity
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(map);
         mapFragment.getMapAsync(this);
 
-        //some trenning point in Australia ;)
-        routeLatLng = new Vector<>();
-        printedRoutes = new Vector<>();
-        routeLatLng.add(new LatLng(-27.457, 153.040));
-        routeLatLng.add(new LatLng(-33.852, 151.211));
-        routeLatLng.add(new LatLng(-37.813, 144.9620));
-        routeLatLng.add(new LatLng(-34.928, 138.599));
-
         locationButton = (Button)findViewById(R.id.locationButton);
         routeModeButton = (Button)findViewById(R.id.routeModeButton);
         speedText = (TextView)findViewById(R.id.speedText);
-        myLocation = new MyLocation(this);
-        markerHandler = new MarkerHandler(myMap);
 
     }
 
@@ -300,7 +273,7 @@ public class MapAndGameActivity extends AppCompatActivity
                     }else {
                         routeLatLng.add(latLng);
                         //drawMarkerOnMap(latLng);
-                        GetDirectionHandler getDirectionHandler = new GetDirectionHandler(routeLatLng, myMap, MapAndGameActivity.this);
+                        routeHandler.drawRoute(routeLatLng);
 
                         routeLatLng.clear();
                         clicCounter=0;
@@ -308,6 +281,7 @@ public class MapAndGameActivity extends AppCompatActivity
                 }else if(poiontToPointRouteModeOn){
                     pointOnMap = latLng;
                     markerHandler.drawMarkerOnMap(latLng, poiontToPointRouteModeOn);
+                    routeHandler.addPointToRoute(latLng);
                 }
             }
         });
@@ -317,24 +291,9 @@ public class MapAndGameActivity extends AppCompatActivity
             speedThreadStarted = true;
         }
 
-        /*
-      Test method -> should be deleted
-        if (!routeLatLng.isEmpty()) {
-            for (int i = 0; i < routeLatLng.size() - 1; ++i)
-                polylines.add(googleMap.addPolyline(new PolylineOptions()
-                        .clickable(true)
-                        .add(routeLatLng.get(i), routeLatLng.get(i + 1))));
-
-            for (Polyline p : polylines) {
-                // Store a data object with the polyline, used here to indicate an arbitrary type.
-                p.setTag("A");
-                // Style the polyline.
-                stylePolyline(p);
-            }
-
-        }
-
-        */
+        markerHandler = new MarkerHandler(myMap);
+        routeHandler = new RouteHandler(myMap, MapAndGameActivity.this);
+        myLocation = new MyLocation(this);
     }
 
     private void printSpeed(){
