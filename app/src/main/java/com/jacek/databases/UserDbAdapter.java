@@ -26,7 +26,7 @@ public class UserDbAdapter {
     public static final String HEIGHT = "height";
     public static final String LEVEL = "level";
     public static String TAG = UserDbAdapter.class.getSimpleName();
-    private static final int DATABASE_VERSION = 6;
+    private static final int DATABASE_VERSION = 8;
     private final Context ctx;
     //endregion
     private DatabaseHelper dbHelper;

@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
         userCursor.close();
         userDbAdapter.close();
         textView.setText(results.toString());
+        Toast.makeText(getApplicationContext(), MD5Hasher.hashWithMD5("elo"), Toast.LENGTH_LONG).show();
 
     }
 }

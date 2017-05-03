@@ -1,5 +1,7 @@
 package com.jacek.databases;
 
+import android.widget.Toast;
+
 import java.util.ArrayList;
 
 /**
@@ -37,7 +39,7 @@ public class User {
     public static ArrayList<User> makeUsers(){
         ArrayList<User> users = new ArrayList<>();
         users.add(new User("Jacek", "elo", "Polak", 100000, 22 , 82, 182, 90));
-        users.add(new User("Jakub", "eloo","Jaszczuk", 100000, 21 , -20, 182, 90));
+        users.add(new User("Jakub", "elo2o","Jaszczuk", 100000, 21 , -20, 182, 90));
         users.add(new User("Bartłomiej", "elooo", "Bielecki", 100000, 22 , 76, -30, 90));
         return users;
     }
