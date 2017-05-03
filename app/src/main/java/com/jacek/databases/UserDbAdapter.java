@@ -26,7 +26,7 @@ public class UserDbAdapter {
     public static final String HEIGHT = "height";
     public static final String LEVEL = "level";
     public static String TAG = UserDbAdapter.class.getSimpleName();
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 11;
     private final Context ctx;
     //endregion
     private DatabaseHelper dbHelper;
@@ -66,6 +66,19 @@ public class UserDbAdapter {
     public boolean deleteUser(int id){
         String[] selectionArgs = {String.valueOf(id)};
         return user_db.delete(USER_TABLE, KEY_ROWID + "=?", selectionArgs) > 0;
+    }
+
+    public boolean loginUser(String name, String password){
+        String sqlQuery = "SELECT * FROM " + USER_TABLE + " WHERE (name = ? AND password = ?);";
+        Cursor cursor = user_db.rawQuery(sqlQuery, new String[]{name, password});
+        if(cursor.getCount() > 0){
+            cursor.close();
+            return true;
+        }
+        else{
+            cursor.close();
+            return false;
+        }
     }
 
     public static final String[] USER_FIELDS = new String[]{
