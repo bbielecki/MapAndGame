@@ -263,6 +263,9 @@ public class MapAndGameActivity extends AppCompatActivity
                 return false;
             }
         });
+
+        //to crate a point on map -> long click on map
+        //if you create 2 and more points, program will draw a route between them
         googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
