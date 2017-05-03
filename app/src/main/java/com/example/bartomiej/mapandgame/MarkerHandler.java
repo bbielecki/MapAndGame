@@ -19,6 +19,7 @@ public class MarkerHandler {
     private GoogleMap myMap;
 
     private Vector<Marker> freeMarkers;
+    private Vector<Marker> routeMarkers;
     private Marker locationMarker;
     private int clickCounter = 0;
 
@@ -26,8 +27,20 @@ public class MarkerHandler {
     MarkerHandler(GoogleMap map){
 
         freeMarkers = new Vector<>();
+        routeMarkers = new Vector<>();
         myMap = map;
 
+    }
+
+    public Vector<Marker> getRouteMarkers() {
+        return routeMarkers;
+    }
+
+    public void deleteRouteMarkers(){
+        for (Marker m : routeMarkers)
+            m.remove();
+
+        routeMarkers.clear();
     }
 
     public void removeLocationMarker(){
@@ -59,7 +72,9 @@ public class MarkerHandler {
         if (point != null) {
             //if route mode is on, created markers should be treated as another checkpoints for created route
             if(routeMode) {
-                return myMap.addMarker(new MarkerOptions().position(point));
+                Marker marker = myMap.addMarker(new MarkerOptions().position(point));
+                routeMarkers.add(marker);
+                return marker;
                 // myMap.moveCamera(CameraUpdateFactory.zoomBy(15));
             }
             //else they are simple markers which means in fact nothing

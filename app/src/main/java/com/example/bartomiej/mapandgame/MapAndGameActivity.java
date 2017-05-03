@@ -106,6 +106,14 @@ public class MapAndGameActivity extends AppCompatActivity
         routeLatLng = latLngs;
 
     }
+    //get markers of created route
+    public Vector<Marker> getRouteMarkers(){
+        return markerHandler.getRouteMarkers();
+    }
+    //delete route markers
+    public void deleteRouteMarkers(){
+        markerHandler.deleteRouteMarkers();
+    }
     //test method//destroy one part of the route from point A to B
     public void deleteRoute(View v){
         routeHandler.deleteRoute();
