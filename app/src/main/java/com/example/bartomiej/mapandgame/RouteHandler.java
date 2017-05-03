@@ -30,18 +30,29 @@ public class RouteHandler {
     }
 
     public void deleteRoute(){
+        route.clear();
         getDirectionHandler.removeRoute();
+        getDirectionHandler.clearRouteLatLng();
+    }
+
+    public void deleteAllRoute(){
+        route.clear();
+        getDirectionHandler.removeAllRoute();
         getDirectionHandler.clearRouteLatLng();
     }
 
     public void drawRoute(Vector<LatLng> route){
         getDirectionHandler.setRouteLatLng(route);
         getDirectionHandler.createRoute();
+        //TODO:usuwanie route?
     }
 
     public void drawRouteThroughPoints(){
-        getDirectionHandler.setRouteLatLng(this.route);
-        getDirectionHandler.createRoute();
+        if(route.size()>1) {
+            getDirectionHandler.setRouteLatLng(this.route);
+            getDirectionHandler.createRoute();
+            //usuwanie route?
+        }
     }
 }
 

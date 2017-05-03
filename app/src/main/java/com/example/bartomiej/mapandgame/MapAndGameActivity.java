@@ -66,9 +66,9 @@ public class MapAndGameActivity extends AppCompatActivity
     // reference to googlemap
     private GoogleMap myMap;
     //allow to recognize route mode through points created on map
-    private boolean poiontToPointRouteModeOn = false;
+    private boolean poiontToPointRouteModeOn = true;
     // allow to recognize rote mode from only one point to another
-    private boolean shortestRouteModeOn = true;
+    private boolean shortestRouteModeOn = false;
     //starts speedThread only once on first click
     private boolean speedThreadStarted = false;
     //creating MyLocation object with location and speed fields
@@ -98,9 +98,13 @@ public class MapAndGameActivity extends AppCompatActivity
         routeLatLng = latLngs;
 
     }
-    //test method
+    //test method//destroy one part of the route from point A to B
     public void deleteRoute(View v){
         routeHandler.deleteRoute();
+    }
+    //destroy all route from A to B and through all waypoints
+    public void deleteAllRoute(View v){
+        routeHandler.deleteAllRoute();
     }
     //test method
     public void drawRouteThroughPoints(View v){
@@ -157,10 +161,6 @@ public class MapAndGameActivity extends AppCompatActivity
         }
     }
 
-    public void drawRouteThroughPointsOnMap(){
-        markerHandler.drawRoute();
-    }
-
     public void showLocationOnMap(View v){
         LatLng loc = myLocation.getLocation();
 
@@ -214,6 +214,10 @@ public class MapAndGameActivity extends AppCompatActivity
         locationButton = (Button)findViewById(R.id.locationButton);
         routeModeButton = (Button)findViewById(R.id.routeModeButton);
         speedText = (TextView)findViewById(R.id.speedText);
+        // Polylines are useful to show a route or some other connection between points.
+        Vector<Polyline> polylines = new Vector<>();
+        //vector of route points
+        routeLatLng = new Vector<>();
 
     }
 
@@ -246,9 +250,6 @@ public class MapAndGameActivity extends AppCompatActivity
     public void onMapReady(GoogleMap googleMap) {
 
         myMap = googleMap;
-        // Add polylines to the map.
-        // Polylines are useful to show a route or some other connection between points.
-        Vector<Polyline> polylines = new Vector<>();
         // Position the map's camera near Warsaw
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(52.2297700, 21.0117800), 10));
 
@@ -256,6 +257,7 @@ public class MapAndGameActivity extends AppCompatActivity
             @Override
             public boolean onMarkerClick(Marker marker) {
                 marker.remove();
+                markerHandler.onMarkerClickHandler(marker);
                 //TODO: jakas madra obsluga znacznikow-> usuwanie co drugi, przenoszenie znacznika itd
 
                 return false;
@@ -282,6 +284,7 @@ public class MapAndGameActivity extends AppCompatActivity
                     pointOnMap = latLng;
                     markerHandler.drawMarkerOnMap(latLng, poiontToPointRouteModeOn);
                     routeHandler.addPointToRoute(latLng);
+                    routeHandler.drawRouteThroughPoints();
                 }
             }
         });
@@ -291,6 +294,7 @@ public class MapAndGameActivity extends AppCompatActivity
             speedThreadStarted = true;
         }
 
+        //handlers with
         markerHandler = new MarkerHandler(myMap);
         routeHandler = new RouteHandler(myMap, MapAndGameActivity.this);
         myLocation = new MyLocation(this);

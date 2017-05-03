@@ -20,6 +20,7 @@ public class MarkerHandler {
 
     private Vector<Marker> freeMarkers;
     private Marker locationMarker;
+    private int clickCounter = 0;
 
 
     MarkerHandler(GoogleMap map){
@@ -36,6 +37,10 @@ public class MarkerHandler {
     public void removeFreeMarkers(){
         for (Marker m : freeMarkers)
             m.remove();
+    }
+    
+    public void onMarkerClickHandler(Marker marker){
+        //TODO: wyswietlanie listy opcji dla markera
     }
 
     // draw point of user location on map
@@ -67,7 +72,5 @@ public class MarkerHandler {
         return null;
     }
 
-    public void drawRoute(){
 
-    }
 }

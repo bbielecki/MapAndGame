@@ -34,7 +34,6 @@ import java.util.Vector;
     private Vector<Vector<Polyline>> printedRoutes = new Vector<>();
     private Vector<LatLng> routeLatLng = new Vector<>();
     private List<LatLng> pontos = new ArrayList<>();
-    private GetDirection getDirection = new GetDirection();
 
     GetDirectionHandler(GoogleMap map, Activity activity) {
         this.map = map;
@@ -52,16 +51,16 @@ import java.util.Vector;
     // before calling createRoute(), routeLatLng must be set
     public void createRoute(){
         if(routeLatLng.size()>1)
-            getDirection.execute();
+            new GetDirection().execute();
     }
-    //test function
-    public void setDestination(String destLat, String destLng){
-        getDirection.setDestination(destLat,destLng);
-    }
-    //test function
-    public void setOrigin(String originLat, String originLng){
-        getDirection.setOrigin(originLat, originLng);
-    }
+//    //test function
+//    public void setDestination(String destLat, String destLng){
+//        getDirection.setDestination(destLat,destLng);
+//    }
+//    //test function
+//    public void setOrigin(String originLat, String originLng){
+//        getDirection.setOrigin(originLat, originLng);
+//    }
     //always removes last route
     public void removeRoute(){
         if(printedRoutes.size()>0) {
@@ -69,6 +68,16 @@ import java.util.Vector;
                 p.remove();
             }
             printedRoutes.remove(0);
+        }
+    }
+    public void removeAllRoute(){
+        if(printedRoutes.size()>0){
+            for (Vector<Polyline> v : printedRoutes){
+                for (Polyline p : v){
+                    p.remove();
+                }
+            }
+            printedRoutes.clear();
         }
     }
 
@@ -97,11 +106,21 @@ import java.util.Vector;
             dialog.show();
 
             destination = routeLatLng.lastElement().latitude + "," + routeLatLng.lastElement().longitude;
-            origin = routeLatLng.get(routeLatLng.size() - 2).latitude + "," + routeLatLng.get(routeLatLng.size() - 2).longitude;
+            origin = routeLatLng.get(0).latitude + "," + routeLatLng.get(0).longitude;
         }
 
         protected String doInBackground(String... args) {
-            String stringUrl = "http://maps.googleapis.com/maps/api/directions/json?origin=" + origin + "&destination=" + destination + "&sensor=false&mode=walking";
+
+            //creating string url from point A to B through waupoints (if any)
+            String waypoints = "";
+            if(routeLatLng.size()>2){
+                waypoints="&waypoints=";
+                for (int i = 1;i<routeLatLng.size()-1;i++) {
+                    waypoints+=routeLatLng.get(i).latitude + "," + routeLatLng.get(i).longitude + "|";
+                }
+            }
+            String stringUrl = "http://maps.googleapis.com/maps/api/directions/json?origin=" + origin + "&destination=" + destination + waypoints + "&sensor=false&mode=walking";
+
             StringBuilder response = new StringBuilder();
             try {
                 URL url = new URL(stringUrl);
@@ -130,8 +149,7 @@ import java.util.Vector;
                 pontos = decodePoly(polyline);
 
             } catch (Exception e) {
-                dialog.setMessage("siec..");
-                dialog.show();
+                Log.i("DoInBackGround","problem");
             }
 
             return null;
