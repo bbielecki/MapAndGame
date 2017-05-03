@@ -18,6 +18,7 @@ public class UserDbAdapter {
     private static final String USER_TABLE = "USER_TABLE";
     public static final String KEY_ROWID = "_id";
     public static final String NAME = "name";
+    public static final String PASSWORD = "password";
     public static final String SURNAME = "surname";
     public static final String POINTS = "points";
     public static final String AGE = "age";
@@ -25,7 +26,7 @@ public class UserDbAdapter {
     public static final String HEIGHT = "height";
     public static final String LEVEL = "level";
     public static String TAG = UserDbAdapter.class.getSimpleName();
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 6;
     private final Context ctx;
     //endregion
     private DatabaseHelper dbHelper;
@@ -61,14 +62,14 @@ public class UserDbAdapter {
     public long insertUser(ContentValues initialValues){
         return user_db.insertWithOnConflict(USER_TABLE, null, initialValues, SQLiteDatabase.CONFLICT_IGNORE);
     }
-    
+
     public boolean deleteUser(int id){
         String[] selectionArgs = {String.valueOf(id)};
         return user_db.delete(USER_TABLE, KEY_ROWID + "=?", selectionArgs) > 0;
     }
 
     public static final String[] USER_FIELDS = new String[]{
-            KEY_ROWID, NAME, SURNAME, POINTS, AGE, WEIGHT, HEIGHT, LEVEL
+            KEY_ROWID, NAME, PASSWORD, SURNAME, POINTS, AGE, WEIGHT, HEIGHT, LEVEL
     };
 
     public Cursor getUsers(){
@@ -79,6 +80,7 @@ public class UserDbAdapter {
         User user = new User();
         user.setId(cursor.getInt(cursor.getColumnIndex(KEY_ROWID)));
         user.setName(cursor.getString(cursor.getColumnIndex(NAME)));
+        user.setPassword(cursor.getString(cursor.getColumnIndex(PASSWORD)));
         user.setSurname(cursor.getString(cursor.getColumnIndex(SURNAME)));
         user.setPoints(cursor.getDouble(cursor.getColumnIndex(POINTS)));
         user.setAge(cursor.getInt(cursor.getColumnIndex(AGE)));
@@ -91,6 +93,7 @@ public class UserDbAdapter {
     private static final String CREATE_USER_TABLE_SQLCommand = "CREATE TABLE " + USER_TABLE + " ("
             + KEY_ROWID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + NAME + " TEXT NOT NULL UNIQUE, "
+            + PASSWORD + " TEXT NOT NULL UNIQUE, "
             + SURNAME + " TEXT NOT NULL UNIQUE, "
             + POINTS + " INTEGER, "
             + AGE + " INTEGER NOT NULL, "

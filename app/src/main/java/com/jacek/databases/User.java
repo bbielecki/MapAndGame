@@ -10,6 +10,7 @@ public class User {
 
     private int id;
     private String name;
+    private String password;
     private String surname;
     private double points;
     private int age;
@@ -21,8 +22,9 @@ public class User {
 
     }
 
-    public User(String mName, String mSurname, double mPoints, int mAge, int mWeight, int mHeight, int mLevel){
+    public User(String mName, String mPassword, String mSurname, double mPoints, int mAge, int mWeight, int mHeight, int mLevel){
         name = mName;
+        password = mPassword;
         surname = mSurname;
         points = mPoints;
         age = mAge;
@@ -34,9 +36,9 @@ public class User {
 
     public static ArrayList<User> makeUsers(){
         ArrayList<User> users = new ArrayList<>();
-        users.add(new User("Jacek", "Polak", 100000, 22 , 82, 182, 90));
-        users.add(new User("Jakub", "Jaszczuk", 100000, 21 , -20, 182, 90));
-        users.add(new User("Bartłomiej", "Bielecki", 100000, 22 , 76, -30, 90));
+        users.add(new User("Jacek", "elo", "Polak", 100000, 22 , 82, 182, 90));
+        users.add(new User("Jakub", "eloo","Jaszczuk", 100000, 21 , -20, 182, 90));
+        users.add(new User("Bartłomiej", "elooo", "Bielecki", 100000, 22 , 76, -30, 90));
         return users;
     }
 
@@ -45,6 +47,14 @@ public class User {
     //region GETTERS AND SETTERS
     public int getId() {
         return id;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public void setId(int id) {

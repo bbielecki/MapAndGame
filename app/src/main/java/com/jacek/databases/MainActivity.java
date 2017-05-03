@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
         for (User user : users){
             ContentValues newValues = new ContentValues();
             newValues.put(UserDbAdapter.NAME, user.getName());
+            newValues.put(UserDbAdapter.PASSWORD, user.getPassword());
             newValues.put(UserDbAdapter.SURNAME, user.getSurname());
             newValues.put(UserDbAdapter.POINTS, user.getPoints());
             newValues.put(UserDbAdapter.AGE, user.getAge());
@@ -38,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         if(userCursor.moveToFirst()){
             do{
                 User user = userDbAdapter.getUserFromCursor(userCursor);
-                results.append(user.getId() + " " + user.getName() + " " + user.getSurname()
+                results.append(user.getId() + " " + user.getName() + " " + user.getSurname() + " " + user.getPassword() + " "
                 + " " + user.getPoints() + " " + user.getAge() + " " + user.getWeight()
                 + " " + user.getHeight() + " " + user.getLevel() + "\n");
             } while (userCursor.moveToNext());
