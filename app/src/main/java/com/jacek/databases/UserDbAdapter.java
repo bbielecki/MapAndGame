@@ -53,15 +53,15 @@ public class UserDbAdapter {
         dbHelper.onUpgrade(user_db, 1 , 0);
     }
 
-    public long insertUser(ContentValues initialValues){
-        return user_db.insertWithOnConflict(USER_TABLE, null, initialValues, SQLiteDatabase.CONFLICT_IGNORE);
-    }
-
     public boolean updateUser(int id, ContentValues newValues){
         String[] selectionArgs = {String.valueOf(id)};
         return user_db.update(USER_TABLE, newValues, KEY_ROWID + "=?", selectionArgs) > 0;
     }
 
+    public long insertUser(ContentValues initialValues){
+        return user_db.insertWithOnConflict(USER_TABLE, null, initialValues, SQLiteDatabase.CONFLICT_IGNORE);
+    }
+    
     public boolean deleteUser(int id){
         String[] selectionArgs = {String.valueOf(id)};
         return user_db.delete(USER_TABLE, KEY_ROWID + "=?", selectionArgs) > 0;
