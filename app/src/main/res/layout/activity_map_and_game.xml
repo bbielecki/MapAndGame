@@ -32,6 +32,15 @@
         android:layout_marginStart="30dp" />
 
     <Button
+        android:text="Delete All Route"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/deleteRouteButton"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:onClick="deleteAllRoute" />
+
+    <Button
         android:text="Route Mode ON"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

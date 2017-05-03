@@ -1,4 +1,14 @@
 <resources>
     <string name="app_name">MapAndGame</string>
     <string name="title_activity_map_and_game">Map</string>
+    <string-array name="actions_array">
+        <item>Jump</item>
+        <item>Pump</item>
+        <item>Run</item>
+        <item>Smile</item>
+        <item>Shout</item>
+        <item>Spin yourself</item>
+        <item>Do not Worry</item>
+        <item>Be Happy</item>
+    </string-array>
 </resources>

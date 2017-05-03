@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:text="Marker Info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="55dp"
+            android:id="@+id/infoTextView" />
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/actionsSpinner"
+            android:layout_below="@+id/infoTextView"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="53dp" />
+
+        <RadioButton
+            android:text="YES"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/actionsSpinner"
+            android:layout_toStartOf="@+id/infoTextView"
+            android:layout_marginEnd="14dp"
+            android:layout_marginTop="105dp"
+            android:id="@+id/deleteYesRadioButton" />
+
+        <RadioButton
+            android:text="NO"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/deleteYesRadioButton"
+            android:layout_toEndOf="@+id/infoTextView"
+            android:layout_marginStart="12dp"
+            android:id="@+id/deleteNoRadioButton"
+            android:checked="false" />
+
+        <TextView
+            android:text="Delete Marker?"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView"
+            android:layout_above="@+id/deleteNoRadioButton"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="19dp" />
+
+        <Button
+            android:text="EXIT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/exitButton"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="87dp" />
+
+    </RelativeLayout>
+</LinearLayout>

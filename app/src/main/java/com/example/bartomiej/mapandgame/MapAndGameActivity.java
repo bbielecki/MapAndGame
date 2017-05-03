@@ -23,6 +23,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.PatternItem;
 import com.google.android.gms.maps.model.Polyline;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import static com.example.bartomiej.mapandgame.R.id.map;
@@ -78,10 +81,15 @@ public class MapAndGameActivity extends AppCompatActivity
     //handling all routes created and drawing them on a map
     private RouteHandler routeHandler;
 
+    private Map<Marker, MarkerDescription> markerAndDescription;
+
+    private MarkerDescription markerDescription;
+
     // Test GUI buttons
     Button locationButton;
     Button pointToPointRouteButton;
     Button routeModeButton;
+    Button deleteRouteButton;
     TextView speedText;
 
 
@@ -211,13 +219,7 @@ public class MapAndGameActivity extends AppCompatActivity
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(map);
         mapFragment.getMapAsync(this);
 
-        locationButton = (Button)findViewById(R.id.locationButton);
-        routeModeButton = (Button)findViewById(R.id.routeModeButton);
-        speedText = (TextView)findViewById(R.id.speedText);
-        // Polylines are useful to show a route or some other connection between points.
-        Vector<Polyline> polylines = new Vector<>();
-        //vector of route points
-        routeLatLng = new Vector<>();
+        initilizeVariables();
 
     }
 
@@ -240,6 +242,20 @@ public class MapAndGameActivity extends AppCompatActivity
         }
     }
 
+    private void initilizeVariables(){
+        locationButton = (Button)findViewById(R.id.locationButton);
+        routeModeButton = (Button)findViewById(R.id.routeModeButton);
+        speedText = (TextView)findViewById(R.id.speedText);
+        deleteRouteButton = (Button)findViewById(R.id.deleteRouteButton);
+        // Polylines are useful to show a route or some other connection between points.
+        Vector<Polyline> polylines = new Vector<>();
+        //vector of route points
+        routeLatLng = new Vector<>();
+
+        markerDescription = new MarkerDescription();
+
+        markerAndDescription = Collections.synchronizedMap(new HashMap<Marker, MarkerDescription>());
+    }
     /**
      * Manipulates the map when it's available.
      * The API invokes this callback when the map is ready to be used.
@@ -256,9 +272,7 @@ public class MapAndGameActivity extends AppCompatActivity
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                marker.remove();
-                markerHandler.onMarkerClickHandler(marker);
-                //TODO: jakas madra obsluga znacznikow-> usuwanie co drugi, przenoszenie znacznika itd
+                createMarkerInfoDialog(marker);
 
                 return false;
             }
@@ -301,6 +315,18 @@ public class MapAndGameActivity extends AppCompatActivity
         markerHandler = new MarkerHandler(myMap);
         routeHandler = new RouteHandler(myMap, MapAndGameActivity.this);
         myLocation = new MyLocation(this);
+    }
+
+    private MarkerDescription createMarkerInfoDialog(Marker marker){
+        markerHandler.onMarkerClickHandler(marker);
+        MarkerInfoDialog dialog = new MarkerInfoDialog();
+
+        markerDescription = dialog.showMarkerInfoDialog(MapAndGameActivity.this, "info", markerAndDescription, marker);
+        if(markerDescription.shouldBeDeleted)
+            marker.remove();
+
+        return markerDescription;
+
     }
 
     private void printSpeed(){
