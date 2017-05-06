@@ -11,10 +11,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class MainActivity extends AppCompatActivity {
 
     private TextView textView;
+    private TextView points_textView;
     private EditText name_editText;
     private EditText password_editText;
     private Button login_button;
@@ -24,13 +26,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         textView = (TextView) findViewById(R.id.database_textView);
+        points_textView = (TextView) findViewById(R.id.points_textView);
         name_editText = (EditText) findViewById(R.id.name_editText);
         password_editText = (EditText) findViewById(R.id.password_editText);
         login_button = (Button) findViewById(R.id.login_button);
 
         ArrayList<User> users = User.makeUsers();
+        ArrayList<Point> points = Point.makePoints();
         final UserDbAdapter userDbAdapter = new UserDbAdapter(this);
+        final PointDbAdapter pointDbAdapter = new PointDbAdapter(this);
         userDbAdapter.open();
+        pointDbAdapter.open();
         for (User user : users){
             ContentValues newValues = new ContentValues();
             newValues.put(UserDbAdapter.NAME, user.getName());
@@ -42,6 +48,25 @@ public class MainActivity extends AppCompatActivity {
             newValues.put(UserDbAdapter.HEIGHT, user.getHeight());
             newValues.put(UserDbAdapter.LEVEL, user.getLevel());
             userDbAdapter.insertUser(newValues);
+        }
+
+        /*
+        Iterator<Point> it = points.iterator();
+        Toast.makeText(getApplicationContext(), Integer.toString(points.size()), Toast.LENGTH_SHORT).show();
+        while(it.hasNext()){
+            Point tempPoint = it.next();
+            ContentValues cv = new ContentValues();
+            cv.put(PointDbAdapter.LATITUDE, tempPoint.getLatitude());
+            cv.put(PointDbAdapter.LONGITUDE, tempPoint.getLongitude());
+            pointDbAdapter.insertPoint(cv);
+        }
+        */
+
+        for (Point point : points){
+            ContentValues cv = new ContentValues();
+            cv.put(PointDbAdapter.LATITUDE, point.getLatitude());
+            cv.put(PointDbAdapter.LONGITUDE, point.getLongitude());
+            pointDbAdapter.insertPoint(cv);
         }
 
         Cursor userCursor = userDbAdapter.getUsers();
@@ -56,7 +81,19 @@ public class MainActivity extends AppCompatActivity {
         }
         userCursor.close();
         textView.setText(results.toString());
-        Toast.makeText(getApplicationContext(), MD5Hasher.hashWithMD5("elo"), Toast.LENGTH_LONG).show();
+
+        Cursor pointCursor = pointDbAdapter.getPoints();
+        StringBuilder pointResults = new StringBuilder();
+        if(pointCursor.moveToFirst()){
+            do{
+                Point point = pointDbAdapter.getPointFromCursor(pointCursor);
+                pointResults.append(point.getId() + " " + point.getLatitude() + " " +
+                        point.getLongitude() + " " + "\n");
+            } while (pointCursor.moveToNext());
+        }
+
+        pointCursor.close();
+        points_textView.setText(pointResults.toString());
 
         login_button.setOnClickListener(new View.OnClickListener() {
             @Override
