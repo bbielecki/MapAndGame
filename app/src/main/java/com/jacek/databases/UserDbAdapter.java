@@ -71,14 +71,10 @@ public class UserDbAdapter {
     public boolean loginUser(String name, String password){
         String sqlQuery = "SELECT * FROM " + USER_TABLE + " WHERE (name = ? AND password = ?);";
         Cursor cursor = user_db.rawQuery(sqlQuery, new String[]{name, password});
-        if(cursor.getCount() > 0){
-            cursor.close();
-            return true;
-        }
-        else{
-            cursor.close();
-            return false;
-        }
+        cursor.close();
+        if(cursor.getCount() > 0) return true;
+        else return false;
+
     }
 
     public static final String[] USER_FIELDS = new String[]{
