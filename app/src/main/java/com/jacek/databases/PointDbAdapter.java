@@ -19,15 +19,16 @@ public class PointDbAdapter {
     public static final String KEY_ROWID = "_id";
     public static final String LATITUDE = "latitude";
     public static final String LONGITUDE = "longitude";
+    public static final String ID_ROUTE = "id_route";
     public static final String TAG = PointDbAdapter.class.getSimpleName();
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 5;
     private final Context ctx;
     //endregion
     private DatabasePointHelper db_point_helper;
     SQLiteDatabase point_db;
 
     public static String[] POINT_FIELDS = {
-      KEY_ROWID, LATITUDE, LONGITUDE
+      KEY_ROWID, LATITUDE, LONGITUDE, ID_ROUTE
     };
 
     public PointDbAdapter(Context mCtx){
@@ -74,13 +75,15 @@ public class PointDbAdapter {
         point.setId(cursor.getInt(cursor.getColumnIndex(KEY_ROWID)));
         point.setLatitude(cursor.getDouble(cursor.getColumnIndex(LATITUDE)));
         point.setLongitude(cursor.getDouble(cursor.getColumnIndex(LONGITUDE)));
+        point.setId_route(cursor.getInt(cursor.getColumnIndex(ID_ROUTE)));
         return point;
     }
 
     private static String POINTDB_CREATE_SQLCOMMAND = "CREATE TABLE " + POINT_TABLE +  " ("
             + KEY_ROWID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + LATITUDE + " REAL, "
-            + LONGITUDE + " REAL);";
+            + LONGITUDE + " REAL, "
+            + ID_ROUTE + " INTEGER NOT NULL UNIQUE);";
 
     private static class DatabasePointHelper extends SQLiteOpenHelper{
         DatabasePointHelper(Context context){

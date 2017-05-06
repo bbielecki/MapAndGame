@@ -50,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
             userDbAdapter.insertUser(newValues);
         }
 
-        /*
         Iterator<Point> it = points.iterator();
         Toast.makeText(getApplicationContext(), Integer.toString(points.size()), Toast.LENGTH_SHORT).show();
         while(it.hasNext()){
@@ -58,16 +57,10 @@ public class MainActivity extends AppCompatActivity {
             ContentValues cv = new ContentValues();
             cv.put(PointDbAdapter.LATITUDE, tempPoint.getLatitude());
             cv.put(PointDbAdapter.LONGITUDE, tempPoint.getLongitude());
+            cv.put(PointDbAdapter.ID_ROUTE, tempPoint.getId_route());
             pointDbAdapter.insertPoint(cv);
         }
-        */
 
-        for (Point point : points){
-            ContentValues cv = new ContentValues();
-            cv.put(PointDbAdapter.LATITUDE, point.getLatitude());
-            cv.put(PointDbAdapter.LONGITUDE, point.getLongitude());
-            pointDbAdapter.insertPoint(cv);
-        }
 
         Cursor userCursor = userDbAdapter.getUsers();
         StringBuilder results = new StringBuilder();

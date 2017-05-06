@@ -11,6 +11,8 @@ public class Point {
     private int id;
     private double latitude;
     private double longitude;
+    private int id_route;
+
 
     public Point(){
 
@@ -18,8 +20,16 @@ public class Point {
 
     public Point(double mLatitude, double mLongitude){
         latitude = mLatitude;
+        id_route = 1;
         longitude = mLongitude;
     }
+
+    public Point(double mLatitude, double mLongitude, int mId_route){
+        latitude = mLatitude;
+        longitude = mLongitude;
+        id_route = mId_route;
+    }
+
     public double getLatitude() {
         return latitude;
     }
@@ -42,6 +52,14 @@ public class Point {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getId_route() {
+        return id_route;
+    }
+
+    public void setId_route(int id_route) {
+        this.id_route = id_route;
     }
 
     public static ArrayList<Point> makePoints(){
