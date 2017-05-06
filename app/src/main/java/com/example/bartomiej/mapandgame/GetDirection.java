@@ -65,7 +65,7 @@ import java.util.Vector;
     // before calling createRoute(), routeLatLng must be set
     public void createRoute(){
         if(printedRoutesMap.containsKey(selectedRouteNumber)){
-            printedRoutes.remove(selectedRouteNumber);
+            printedRoutesMap.remove(selectedRouteNumber);
         }
         if(routeLatLng.size()>1)
             new GetDirection().execute();
