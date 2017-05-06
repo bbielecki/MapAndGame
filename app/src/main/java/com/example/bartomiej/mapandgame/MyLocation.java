@@ -19,7 +19,8 @@ public class MyLocation implements LocationListener {
 
     private Context context;
     private LocationManager locationManager;
-    private double latitude, longitude, speed; // location parameters
+    private double latitude, longitude;
+    private float speed; // location parameters
     private double prevLatitude, prevLongitude;
     private int locationUpdateTime = 1000; //check location in every locationUpdateTime (ms)
     private Location LastKnownLocation, PrevLocation;
@@ -93,7 +94,7 @@ public class MyLocation implements LocationListener {
         }
     }
 
-    public double getSpeed(){
+    public float getSpeed(){
         return speed;
     }
 
@@ -103,15 +104,16 @@ public class MyLocation implements LocationListener {
 
         if(PrevLocation != null){
             if(location.hasSpeed()){
-                speed = location.getSpeed();
+                speed = location.getSpeed() * 36 / 10;
             }else {
-                float[] distance = new float[5];
+                float[ ] distance = new float[ 5 ];
                 Location.distanceBetween(LastKnownLocation.getLatitude(), LastKnownLocation.getLongitude(),
                         PrevLocation.getLatitude(),PrevLocation.getLongitude(), distance);
 
-                double timeDiff = LastKnownLocation.getTime() - PrevLocation.getTime();
-                speed = distance[0]/timeDiff;
-                speed = speed * 3600/1000;
+                float timeDiff = LastKnownLocation.getTime() - PrevLocation.getTime();
+                speed = distance[0]/timeDiff * 36 / 10;
+
+                //location.setSpeed(speed);
             }
         }
 

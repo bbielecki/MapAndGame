@@ -15,12 +15,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.Dash;
-import com.google.android.gms.maps.model.Dot;
-import com.google.android.gms.maps.model.Gap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.PatternItem;
 import com.google.android.gms.maps.model.Polyline;
 
 import java.util.Collections;
@@ -39,20 +35,8 @@ public class MapAndGameActivity extends AppCompatActivity
         implements
         OnMapReadyCallback {
 
-    private static final int COLOR_BLACK_ARGB = 0xff000000;
-    private static final int COLOR_WHITE_ARGB = 0xffffffff;
-    private static final int COLOR_GREEN_ARGB = 0xff388E3C;
-    private static final int COLOR_PURPLE_ARGB = 0xff81C784;
-    private static final int COLOR_ORANGE_ARGB = 0xffF57F17;
-    private static final int COLOR_BLUE_ARGB = 0xffF9A825;
-
-    private static final int POLYLINE_STROKE_WIDTH_PX = 12;
-    private static final int POLYGON_STROKE_WIDTH_PX = 8;
     private static final int PATTERN_DASH_LENGTH_PX = 20;
     private static final int PATTERN_GAP_LENGTH_PX = 20;
-    private static final PatternItem DOT = new Dot();
-    private static final PatternItem DASH = new Dash(PATTERN_DASH_LENGTH_PX);
-    private static final PatternItem GAP = new Gap(PATTERN_GAP_LENGTH_PX);
     private static final int MY_LOCATION_PERMISSION = 0;
     private static final String ROUTE_MODE_MESSAGE = "Touch on map where you want to \n place start and end point for route";
     private int clicCounter = 0;
@@ -68,11 +52,15 @@ public class MapAndGameActivity extends AppCompatActivity
     private LatLng pointOnMap;
     // reference to googlemap
     private GoogleMap myMap;
+
+    // allw to create a route
+    private boolean routeMode = true;
     //allow to recognize route mode through points created on map
     private boolean poiontToPointRouteModeOn = true;
     // allow to recognize rote mode from only one point to another
     private boolean shortestRouteModeOn = false;
     //starts speedThread only once on first click
+
     private boolean speedThreadStarted = false;
     //creating MyLocation object with location and speed fields
     private MyLocation myLocation;
@@ -80,10 +68,12 @@ public class MapAndGameActivity extends AppCompatActivity
     private MarkerHandler markerHandler;
     //handling all routes created and drawing them on a map
     private RouteHandler routeHandler;
-
+    //map associeting markers with description
     private Map<Marker, MarkerDescription> markerAndDescription;
-
+    //object associated with marker, id describes action selected by user and other options described in MarkerDescription class
     private MarkerDescription markerDescription;
+    // route number selected by user
+    private int selectedRouteNumber;
 
     // Test GUI buttons
     Button locationButton;
@@ -101,11 +91,19 @@ public class MapAndGameActivity extends AppCompatActivity
 
 
     //interface of GoogleMaps for our application
-    //Create poliline from latlngs: objects representing google maps coordinates
-    public void createRoute(Vector<LatLng> latLngs) {
-        routeLatLng = latLngs;
-
+    //Create route to have an ability to add points to route. It should be called before adding points
+    public void startCreateRoute() {
+        routeHandler.createRoute();
     }
+    //
+    public void selectRoute(int routeNumber){
+        selectedRouteNumber = routeNumber;
+    }
+
+    public int getSelectedRoute(){
+        return selectedRouteNumber;
+    }
+
     //get markers of created route
     public Vector<Marker> getRouteMarkers(){
         return markerHandler.getRouteMarkers();
@@ -114,13 +112,15 @@ public class MapAndGameActivity extends AppCompatActivity
     public void deleteRouteMarkers(){
         markerHandler.deleteRouteMarkers();
     }
-    //test method//destroy one part of the route from point A to B
-    public void deleteRoute(View v){
-        routeHandler.deleteRoute();
-    }
+
+//    //test method//destroy one part of the route from point A to B
+//    public void deleteRoute(View v){
+//        routeHandler.deleteRoute(selectedRouteNumber);
+//    }
+
     //destroy all route from A to B and through all waypoints
     public void deleteAllRoute(View v){
-        routeHandler.deleteAllRoute();
+        routeHandler.deleteAllRoute(selectedRouteNumber);
     }
     //test method
     public void drawRouteThroughPoints(View v){
@@ -156,12 +156,13 @@ public class MapAndGameActivity extends AppCompatActivity
     //enable user to create his own route or
     //disable user ability to creating own route
     public void setRouteMode(View v){
-        if(shortestRouteModeOn) {
-            shortestRouteModeOn = false;
+        if(routeMode) {
+            routeMode = false;
             routeModeButton.setText("Route Mode OFF");
         }
         else {
-            shortestRouteModeOn = true;
+            startCreateRoute();
+            routeMode = true;
             routeModeButton.setText("Route Mode ON");
         }
     }
@@ -323,6 +324,9 @@ public class MapAndGameActivity extends AppCompatActivity
         markerHandler = new MarkerHandler(myMap);
         routeHandler = new RouteHandler(myMap, MapAndGameActivity.this);
         myLocation = new MyLocation(this);
+
+        //TODO: testowo, potem usun
+        startCreateRoute();
     }
 
     private MarkerDescription createMarkerInfoDialog(Marker marker){

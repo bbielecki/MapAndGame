@@ -20,20 +20,34 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 /**
  * Created by Bartłomiej on 28.04.2017.
  */
-//TODO: zastanow sie jak zrobic z tego klase nie prywatna, czy da sie wykorzystac ten kod w MarkerHandler
 
+// TODO: a moze zapamietac dlugosci pojedynczych odcinkow?
     class GetDirectionHandler {
     private Activity activity;
     private GoogleMap map;
     private Vector<Vector<Polyline>> printedRoutes = new Vector<>();
+    private Map<Integer, Vector<Vector<Polyline>>> printedRoutesMap = new HashMap<>();
     private Vector<LatLng> routeLatLng = new Vector<>();
     private List<LatLng> pontos = new ArrayList<>();
+    private int selectedRouteNumber;
+
+    public int getDistanceInMeters() {
+        return distanceInMeters;
+    }
+
+    private int distanceInMeters;
+
+    public void setSelectedRouteNumber(int selectedRouteNumber) {
+        this.selectedRouteNumber = selectedRouteNumber;
+    }
 
     GetDirectionHandler(GoogleMap map, Activity activity) {
         this.map = map;
@@ -44,12 +58,15 @@ import java.util.Vector;
         if(routeLatLng!=null)
             routeLatLng.clear();
     }
-
+    // has to be called before creating a route
     public void setRouteLatLng(Vector<LatLng> routeLatLng){
         this.routeLatLng = routeLatLng;
     }
     // before calling createRoute(), routeLatLng must be set
     public void createRoute(){
+        if(printedRoutesMap.containsKey(selectedRouteNumber)){
+            printedRoutes.remove(selectedRouteNumber);
+        }
         if(routeLatLng.size()>1)
             new GetDirection().execute();
     }
@@ -61,23 +78,27 @@ import java.util.Vector;
 //    public void setOrigin(String originLat, String originLng){
 //        getDirection.setOrigin(originLat, originLng);
 //    }
+
     //always removes last route
-    public void removeRoute(){
-        if(printedRoutes.size()>0) {
-            for (Polyline p : printedRoutes.get(0)) {
-                p.remove();
-            }
-            printedRoutes.remove(0);
-        }
-    }
-    public void removeAllRoute(){
-        if(printedRoutes.size()>0){
-            for (Vector<Polyline> v : printedRoutes){
+//    public void removeRoute(int routeNumber){
+//        if(printedRoutesMap.containsKey(routeNumber)) {
+//            for (Polyline p : printedRoutesMap.get(routeNumber).get(0)) {
+//                p.remove();
+//            }
+//            printedRoutes.remove(0);
+//        }
+//    }
+
+    //remove all route selected through points
+    public void removeAllRoute(int selectedRouteNumber){
+        if(printedRoutesMap.containsKey(selectedRouteNumber)){
+            for (Vector<Polyline> v : printedRoutesMap.get(selectedRouteNumber)){
                 for (Polyline p : v){
                     p.remove();
                 }
             }
             printedRoutes.clear();
+            printedRoutesMap.remove(selectedRouteNumber);
         }
     }
 
@@ -113,7 +134,7 @@ import java.util.Vector;
 
             //creating string url from point A to B through waupoints (if any)
             String waypoints = "";
-            if(routeLatLng.size()>2){
+            if(routeLatLng.size( )>2){
                 waypoints="&waypoints=";
                 for (int i = 1;i<routeLatLng.size()-1;i++) {
                     waypoints+=routeLatLng.get(i).latitude + "," + routeLatLng.get(i).longitude + "|";
@@ -143,6 +164,10 @@ import java.util.Vector;
                 JSONArray routesArray = jsonObject.getJSONArray("routes");
                 // Grab the first route
                 JSONObject route = routesArray.getJSONObject(0);
+                JSONArray legs =  route.getJSONArray("legs");
+                JSONObject leg = legs.getJSONObject(0);
+                JSONObject distance = leg.optJSONObject("distance");
+                distanceInMeters = distance.getInt("value");
 
                 JSONObject poly = route.getJSONObject("overview_polyline");
                 String polyline = poly.getString("points");
@@ -177,6 +202,8 @@ import java.util.Vector;
                 }
             }
             printedRoutes.add(parts);
+            // remeber printed routes for later edition
+            printedRoutesMap.put(selectedRouteNumber, printedRoutes);
             dialog.dismiss();
         }
 

@@ -96,6 +96,7 @@ public class MarkerInfoDialog {
                 else {
                     markerDescription.shouldBeDeleted = true;
                     marker.remove();
+                    //TODO: ogarnij markerHandler -> routeMarkers
                 }
 
 
