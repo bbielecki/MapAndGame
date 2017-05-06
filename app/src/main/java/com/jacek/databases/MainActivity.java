@@ -81,7 +81,9 @@ public class MainActivity extends AppCompatActivity {
             do{
                 Point point = pointDbAdapter.getPointFromCursor(pointCursor);
                 pointResults.append(point.getId() + " " + point.getLatitude() + " " +
-                        point.getLongitude() + " " + "\n");
+                        point.getLongitude() + " "
+                        + point.getId_route() + " "
+                        + "\n");
             } while (pointCursor.moveToNext());
         }
 

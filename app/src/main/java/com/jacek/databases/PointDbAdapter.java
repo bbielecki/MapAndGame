@@ -21,7 +21,7 @@ public class PointDbAdapter {
     public static final String LONGITUDE = "longitude";
     public static final String ID_ROUTE = "id_route";
     public static final String TAG = PointDbAdapter.class.getSimpleName();
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 9;
     private final Context ctx;
     //endregion
     private DatabasePointHelper db_point_helper;
@@ -83,7 +83,7 @@ public class PointDbAdapter {
             + KEY_ROWID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + LATITUDE + " REAL, "
             + LONGITUDE + " REAL, "
-            + ID_ROUTE + " INTEGER NOT NULL UNIQUE);";
+            + ID_ROUTE + " INTEGER NOT NULL);";
 
     private static class DatabasePointHelper extends SQLiteOpenHelper{
         DatabasePointHelper(Context context){
